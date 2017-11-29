@@ -55,16 +55,23 @@ const populateStages = (issue: JiraApiIssue, stageMap, stageBins, unusedStages =
 
 const filterAndFlattenStagingDates = (stageBins: string[][]) => {
   let latestValidIssueDateSoFar: string = '';
+  const lastIdx = stageBins.length - 1;
+
   const stagingDates = stageBins.map((stageBin: string[], idx: number) => {
     let validStageDates: string[] = stageBin.filter(date => {
       // All dates are ISO 8601, so string comparison is fine
-      return date >= latestValidIssueDateSoFar ? true : false;
+      return date >= latestValidIssueDateSoFar;
     });
     if (validStageDates.length) {
       validStageDates.sort();
-      latestValidIssueDateSoFar = validStageDates[validStageDates.length - 1];
-      const earliestStageDate = validStageDates[0];
-      return earliestStageDate.split('T')[0]; 
+      // Prefer earliest valid date except in the last stage
+      if(idx < lastIdx){
+        const earliestStageDate = latestValidIssueDateSoFar = validStageDates[0];
+        return earliestStageDate.split('T')[0];
+      } else {
+        const latestStageDate = validStageDates[validStageDates.length - 1];
+        return latestStageDate.split('T')[0];
+      }
     } else {
       return '';
     }
