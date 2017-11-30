@@ -65,11 +65,11 @@ const filterAndFlattenStagingDates = (stageBins: string[][]) => {
     if (validStageDates.length) {
       validStageDates.sort();
       // Prefer earliest valid date except in the last stage
-      if(idx < lastIdx){
+      if(idx < lastIdx && idx != 0){
         const earliestStageDate = latestValidIssueDateSoFar = validStageDates[0];
         return earliestStageDate.split('T')[0];
       } else {
-        const latestStageDate = validStageDates[validStageDates.length - 1];
+        const latestStageDate = latestValidIssueDateSoFar = validStageDates[validStageDates.length - 1];
         return latestStageDate.split('T')[0];
       }
     } else {
